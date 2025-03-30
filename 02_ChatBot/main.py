@@ -23,8 +23,8 @@ import uvicorn
 
 
 # 设置LangSmith环境变量 进行应用跟踪，实时了解应用中的每一步发生了什么
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_API_KEY"] = "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"
+# os.environ["LANGCHAIN_TRACING_V2"] = "true"
+# os.environ["LANGCHAIN_API_KEY"] = "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"
 
 
 # 设置日志模版
@@ -37,7 +37,7 @@ PROMPT_TEMPLATE_TXT_SYS = "prompt_template_system.txt"
 PROMPT_TEMPLATE_TXT_USER = "prompt_template_user.txt"
 
 # openai:调用gpt模型,oneapi:调用oneapi方案支持的模型,ollama:调用本地开源大模型,qwen:调用阿里通义千问大模型
-llm_type = "openai"
+llm_type = "siliconflow"
 
 # API服务设置相关
 PORT = 8012
@@ -245,6 +245,7 @@ async def chat_completions(request: ChatCompletionRequest):
 
         # 处理非流式响应处理
         else:
+            result = ""
             try:
                 events = graph.stream({"messages": prompt}, config)
                 for event in events:

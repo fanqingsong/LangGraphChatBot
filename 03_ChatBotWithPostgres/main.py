@@ -40,7 +40,7 @@ PROMPT_TEMPLATE_TXT_SYS = "prompt_template_system.txt"
 PROMPT_TEMPLATE_TXT_USER = "prompt_template_user.txt"
 
 # openai:调用gpt模型,oneapi:调用oneapi方案支持的模型,ollama:调用本地开源大模型,qwen:调用阿里通义千问大模型
-llm_type = "openai"
+llm_type = "siliconflow"
 
 # API服务设置相关
 PORT = 8012
@@ -197,7 +197,7 @@ async def lifespan(app: FastAPI):
         in_postgres_store = PostgresStore(
             connection_pool,
             index={
-                "dims": 1536,
+                "dims": 1024,
                 "embed": embedding
             }
         )
@@ -264,6 +264,7 @@ async def chat_completions(request: ChatCompletionRequest):
 
         # 处理非流式响应处理
         else:
+            result = ""
             try:
                 events = graph.stream({"messages": prompt}, config)
                 for event in events:

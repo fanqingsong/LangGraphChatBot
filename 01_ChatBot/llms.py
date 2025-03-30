@@ -1,8 +1,12 @@
 import os
+from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from typing import Optional
 import logging
 
+# 加载.env文件中的环境变量
+# .env在上一级目录中，请修改路径
+load_dotenv('.env')
 
 # Author:@南哥AGI研习社 (B站 or YouTube 搜索“南哥AGI研习社”)
 
@@ -33,12 +37,17 @@ MODEL_CONFIGS = {
         "base_url": "http://localhost:11434/v1",
         "api_key": "ollama",
         "model": "deepseek-r1:14b"
+    },
+    "siliconflow": {
+        "base_url": os.getenv("SILICONFLOW_BASE_URL", "https://api.siliconflow.cn/v1"),
+        "api_key": os.getenv("SILICONFLOW_API_KEY", ""),
+        "model": os.getenv("SILICONFLOW_MODEL", 'Qwen/Qwen2.5-7B-Instruct')
     }
 }
 
 
 # 默认配置
-DEFAULT_LLM_TYPE = "openai"
+DEFAULT_LLM_TYPE = "siliconflow"
 DEFAULT_TEMPERATURE = 0.7
 
 

@@ -17,14 +17,16 @@ from langgraph.checkpoint.memory import MemorySaver
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse, StreamingResponse
 import uvicorn
+# from openai.error import OpenAIError
+from openai import OpenAIError
 
 
 # Author:@南哥AGI研习社 (B站 or YouTube 搜索“南哥AGI研习社”)
 
 
 # 设置LangSmith环境变量 进行应用跟踪，实时了解应用中的每一步发生了什么
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_API_KEY"] = "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"
+# os.environ["LANGCHAIN_TRACING_V2"] = "true"
+# os.environ["LANGCHAIN_API_KEY"] = "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"
 
 
 # 设置日志模版
@@ -37,7 +39,7 @@ PROMPT_TEMPLATE_TXT_SYS = "prompt_template_system.txt"
 PROMPT_TEMPLATE_TXT_USER = "prompt_template_user.txt"
 
 # openai:调用gpt模型,oneapi:调用oneapi方案支持的模型,ollama:调用本地开源大模型,qwen:调用阿里通义千问大模型
-llm_type = "ollama"
+llm_type = "siliconflow"
 
 # API服务设置相关
 PORT = 8012
@@ -179,10 +181,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-# 封装POST请求接口，与大模型进行问答
 @app.post("/v1/chat/completions")
 async def chat_completions(request: ChatCompletionRequest):
-    # 判断初始化是否完成
     if not graph:
         logger.error("服务未初始化")
         raise HTTPException(status_code=500, detail="服务未初始化")
@@ -203,51 +203,74 @@ async def chat_completions(request: ChatCompletionRequest):
             {"role": "user", "content": prompt_template_user.template.format(query=query_prompt)}
         ]
 
-        # 处理流式响应
         if request.stream:
-            async def generate_stream():
-                chunk_id = f"chatcmpl-{uuid.uuid4().hex}"
-                async for message_chunk, metadata in graph.astream({"messages": prompt}, config, stream_mode="messages"):
-                    chunk = message_chunk.content
-                    logger.info(f"chunk: {chunk}")
-                    # 在处理过程中产生每个块
-                    yield f"data: {json.dumps({'id': chunk_id,'object': 'chat.completion.chunk','created': int(time.time()),'choices': [{'index': 0,'delta': {'content': chunk},'finish_reason': None}]})}\n\n"
-                # 流结束的最后一块
-                yield f"data: {json.dumps({'id': chunk_id,'object': 'chat.completion.chunk','created': int(time.time()),'choices': [{'index': 0,'delta': {},'finish_reason': 'stop'}]})}\n\n"
-            # 返回fastapi.responses中StreamingResponse对象
-            return StreamingResponse(generate_stream(), media_type="text/event-stream")
-
-        # 处理非流式响应处理
+            return await handle_stream_response(prompt, config)
         else:
-            try:
-                events = graph.stream({"messages": prompt}, config)
-                for event in events:
-                    for value in event.values():
-                        result = value["messages"][-1].content
-            except Exception as e:
-                logger.info(f"Error processing response: {str(e)}")
-
-            formatted_response = str(format_response(result))
-            logger.info(f"格式化的搜索结果: {formatted_response}")
-
-            response = ChatCompletionResponse(
-                choices=[
-                    ChatCompletionResponseChoice(
-                        index=0,
-                        message=Message(role="assistant", content=formatted_response),
-                        finish_reason="stop"
-                    )
-                ]
-            )
-            logger.info(f"发送响应内容: \n{response}")
-            # 返回fastapi.responses中JSONResponse对象
-            # model_dump()方法通常用于将Pydantic模型实例的内容转换为一个标准的Python字典，以便进行序列化
-            return JSONResponse(content=response.model_dump())
+            return await handle_non_stream_response(prompt, config)
 
     except Exception as e:
         logger.error(f"处理聊天完成时出错:\n\n {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+async def handle_stream_response(prompt, config):
+    async def generate_stream():
+        chunk_id = f"chatcmpl-{uuid.uuid4().hex}"
+        try:
+            async for message_chunk, metadata in graph.astream({"messages": prompt}, config, stream_mode="messages"):
+                chunk = message_chunk.content
+                logger.info(f"chunk: {chunk}")
+                yield f"data: {json.dumps({'id': chunk_id,'object': 'chat.completion.chunk','created': int(time.time()),'choices': [{'index': 0,'delta': {'content': chunk},'finish_reason': None}]})}\n\n"
+            yield f"data: {json.dumps({'id': chunk_id,'object': 'chat.completion.chunk','created': int(time.time()),'choices': [{'index': 0,'delta': {},'finish_reason': 'stop'}]})}\n\n"
+        except OpenAIError as e:
+            logger.error(f"OpenAI API 错误: {str(e)}")
+            yield f"data: {json.dumps({'error': 'OpenAI API 错误'})}\n\n"
+        except Exception as e:
+            logger.error(f"流式响应处理错误: {str(e)}")
+            yield f"data: {json.dumps({'error': '处理请求时发生错误'})}\n\n"
+
+    return StreamingResponse(generate_stream(), media_type="text/event-stream")
+
+async def handle_non_stream_response(prompt, config):
+    max_retries = 3
+    retry_delay = 1
+    result = None
+
+    for attempt in range(max_retries):
+        try:
+            events = graph.stream({"messages": prompt}, config)
+            for event in events:
+                for value in event.values():
+                    result = value["messages"][-1].content
+            break
+        except OpenAIError as e:
+            logger.warning(f"OpenAI API 错误 (尝试 {attempt + 1}/{max_retries}): {str(e)}")
+            if attempt < max_retries - 1:
+                time.sleep(retry_delay)
+                retry_delay *= 2
+            else:
+                logger.error(f"OpenAI API 错误，已达到最大重试次数: {str(e)}")
+                raise HTTPException(status_code=503, detail="服务暂时不可用，请稍后再试")
+        except Exception as e:
+            logger.error(f"非流式响应处理错误: {str(e)}")
+            raise HTTPException(status_code=500, detail="处理请求时发生错误")
+
+    if result is None:
+        raise HTTPException(status_code=500, detail="无法获取有效响应")
+
+    formatted_response = str(format_response(result))
+    logger.info(f"格式化的搜索结果: {formatted_response}")
+
+    response = ChatCompletionResponse(
+        choices=[
+            ChatCompletionResponseChoice(
+                index=0,
+                message=Message(role="assistant", content=formatted_response),
+                finish_reason="stop"
+            )
+        ]
+    )
+    logger.info(f"发送响应内容: \n{response}")
+    return JSONResponse(content=response.model_dump())
 
 
 if __name__ == "__main__":

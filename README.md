@@ -141,11 +141,25 @@ https://gitee.com/NanGePlus/LangGraphChatBot
 
 ## 3.4 安装项目依赖          
 命令行终端中直接运行如下命令安装依赖                  
-pip install langgraph==0.2.74                  
-pip install langchain-openai==0.3.6            
-pip install fastapi==0.115.8                         
-pip install uvicorn==0.34.0                          
-pip install gradio==5.18.0           
+uv venv
+source .venv/bin/activate
+
+uv pip install langgraph==0.2.74                  
+uv pip install langchain-openai==0.3.6            
+uv pip install fastapi==0.115.8                         
+uv pip install uvicorn==0.34.0                          
+uv pip install gradio==4.0.0           
+uv pip install python-dotenv
+uv pip install langgraph-checkpoint-postgres
+uv pip install --upgrade psycopg[binary]
+uv pip install chromadb
+uv pip install pdfminer.six
+uv pip install nltk
+uv pip install concurrent-log-handler
+uv pip install psycopg2-binary
+uv pip install langchain-community
+
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
 
 # 4、项目测试

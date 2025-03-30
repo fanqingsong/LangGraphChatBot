@@ -4,8 +4,14 @@ from langchain_openai import ChatOpenAI,OpenAIEmbeddings
 from typing import Optional
 import logging
 
+from dotenv import load_dotenv
 
 # Author:@南哥AGI研习社 (B站 or YouTube 搜索“南哥AGI研习社”)
+
+
+# 加载.env文件中的环境变量
+# .env在上一级目录中，请修改路径
+load_dotenv('.env')
 
 
 # 设置日志模版
@@ -39,12 +45,18 @@ MODEL_CONFIGS = {
         "api_key": "ollama",
         "chat_model": "deepseek-r1:14b",
         "embedding_model": "nomic-embed-text:latest"
+    },
+    "siliconflow": {
+        "base_url": os.getenv("SILICONFLOW_API_URL", "https://api.siliconflow.cn/v1"),
+        "api_key": os.getenv("SILICONFLOW_API_KEY", ""),
+        "chat_model": os.getenv("SILICONFLOW_API_MODEL", 'Qwen/Qwen2.5-7B-Instruct'),
+        "embedding_model": os.getenv("SILICONFLOW_API_EMBEDDING_MODEL"),
     }
 }
 
 
 # 默认配置
-DEFAULT_LLM_TYPE = "openai"
+DEFAULT_LLM_TYPE = "siliconflow"
 DEFAULT_TEMPERATURE = 0.7
 
 
@@ -91,7 +103,8 @@ def initialize_llm(llm_type: str = DEFAULT_LLM_TYPE) -> tuple[ChatOpenAI, OpenAI
             base_url=config["base_url"],
             api_key=config["api_key"],
             model=config["embedding_model"],
-            deployment=config["embedding_model"]
+            deployment=config["embedding_model"],
+            dimensions=1024,
         )
 
         logger.info(f"成功初始化 {llm_type} LLM")

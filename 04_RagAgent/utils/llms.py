@@ -1,9 +1,17 @@
 import os
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_openai import ChatOpenAI,OpenAIEmbeddings
+from typing import Optional
 import logging
 
+from dotenv import load_dotenv
 
 # Author:@南哥AGI研习社 (B站 or YouTube 搜索“南哥AGI研习社”)
+
+
+# 加载.env文件中的环境变量
+# .env在上一级目录中，请修改路径
+load_dotenv('.env')
 
 
 # 设置日志模版
@@ -15,33 +23,40 @@ logger = logging.getLogger(__name__)
 MODEL_CONFIGS = {
     "openai": {
         "base_url": "https://nangeai.top/v1",
-        "api_key": "sk-aR2Y1723uOKtS7l1H223brKSKPswr023o6AMvCG6g3EfViPku",
+        "api_key": "sk-0OWbyfzUSwajhvqGoNbjIEEWchM15CchgJ5hIaN6qh9I3XRl",
         "chat_model": "gpt-4o-mini",
         "embedding_model": "text-embedding-3-small"
+
     },
     "oneapi": {
         "base_url": "http://139.224.72.218:3000/v1",
-        "api_key": "sk-GseYmJ8pX1D0I00W7a506e8fDf23474A3C4B724FfD66aD9",
+        "api_key": "sk-EDjbeeCYkD1OnI9E48018a018d2d4f44958798A261137591",
         "chat_model": "qwen-max",
         "embedding_model": "text-embedding-v1"
     },
     "qwen": {
         "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-        "api_key": "sk-c45db4d2628e48cf232326e152c9a537f",
+        "api_key": "sk-80a72f794bc4488d85798d590e96db43",
         "chat_model": "qwen-max",
         "embedding_model": "text-embedding-v1"
     },
     "ollama": {
         "base_url": "http://localhost:11434/v1",
         "api_key": "ollama",
-        "chat_model": "llama3.1:8b",
+        "chat_model": "deepseek-r1:14b",
         "embedding_model": "nomic-embed-text:latest"
+    },
+    "siliconflow": {
+        "base_url": os.getenv("SILICONFLOW_API_URL", "https://api.siliconflow.cn/v1"),
+        "api_key": os.getenv("SILICONFLOW_API_KEY", ""),
+        "chat_model": os.getenv("SILICONFLOW_API_MODEL", 'Qwen/Qwen2.5-7B-Instruct'),
+        "embedding_model": os.getenv("SILICONFLOW_API_EMBEDDING_MODEL"),
     }
 }
 
 
 # 默认配置
-DEFAULT_LLM_TYPE = "openai"
+DEFAULT_LLM_TYPE = "siliconflow"
 DEFAULT_TEMPERATURE = 0.7
 
 
@@ -75,7 +90,7 @@ def initialize_llm(llm_type: str = DEFAULT_LLM_TYPE) -> tuple[ChatOpenAI, OpenAI
             os.environ["OPENAI_API_KEY"] = "NA"
 
         # 创建LLM实例
-        llm_chat = ChatOpenAI(
+        llm = ChatOpenAI(
             base_url=config["base_url"],
             api_key=config["api_key"],
             model=config["chat_model"],
@@ -84,15 +99,16 @@ def initialize_llm(llm_type: str = DEFAULT_LLM_TYPE) -> tuple[ChatOpenAI, OpenAI
             max_retries=2  # 添加重试次数
         )
 
-        llm_embedding = OpenAIEmbeddings(
+        embedding = OpenAIEmbeddings(
             base_url=config["base_url"],
             api_key=config["api_key"],
             model=config["embedding_model"],
-            deployment=config["embedding_model"]
+            deployment=config["embedding_model"],
+            dimensions=1024,
         )
 
         logger.info(f"成功初始化 {llm_type} LLM")
-        return llm_chat, llm_embedding
+        return llm, embedding
 
     except ValueError as ve:
         logger.error(f"LLM配置错误: {str(ve)}")

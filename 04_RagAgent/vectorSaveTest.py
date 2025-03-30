@@ -5,7 +5,16 @@ import chromadb
 import uuid
 from utils import pdfSplitTest_Ch
 from utils import pdfSplitTest_En
+import os
 
+from dotenv import load_dotenv
+
+# Author:@南哥AGI研习社 (B站 or YouTube 搜索“南哥AGI研习社”)
+
+
+# 加载.env文件中的环境变量
+# .env在上一级目录中，请修改路径
+load_dotenv('.env')
 
 
 
@@ -31,9 +40,15 @@ OLLAMA_API_BASE = "http://localhost:11434/v1"
 OLLAMA_EMBEDDING_API_KEY = "ollama"
 OLLAMA_EMBEDDING_MODEL = "nomic-embed-text:latest"
 
+# 国内大模型 SiliconFlow方式
+SILICONFLOW_API_BASE = os.getenv("SILICONFLOW_API_URL", "https://api.siliconflow.cn/v1")
+SILICONFLOW_EMBEDDING_API_KEY = os.getenv("SILICONFLOW_API_KEY", "")
+SILICONFLOW_EMBEDDING_MODEL = os.getenv("SILICONFLOW_API_EMBEDDING_MODEL")
+
+
 
 # openai:调用gpt模型,oneapi:调用oneapi方案支持的模型,ollama:调用本地开源大模型,qwen:调用阿里通义千问大模型
-llmType = "openai"
+llmType = "siliconflow"
 
 # 设置测试文本类型 Chinese 或 English
 TEXT_LANGUAGE = 'Chinese'
@@ -86,6 +101,17 @@ def get_embeddings(texts):
                 api_key=OLLAMA_EMBEDDING_API_KEY
             )
             data = client.embeddings.create(input=texts,model=OLLAMA_EMBEDDING_MODEL).data
+            return [x.embedding for x in data]
+        except Exception as e:
+            logger.info(f"生成向量时出错: {e}")
+            return []
+    elif llmType == 'siliconflow':
+        try:
+            client = OpenAI(
+                base_url=SILICONFLOW_API_BASE,
+                api_key=SILICONFLOW_EMBEDDING_API_KEY
+            )
+            data = client.embeddings.create(input=texts,model=SILICONFLOW_EMBEDDING_MODEL).data
             return [x.embedding for x in data]
         except Exception as e:
             logger.info(f"生成向量时出错: {e}")
