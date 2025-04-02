@@ -161,3 +161,75 @@
 2025-03-30 22:38:27,452 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
 2025-03-30 22:39:28,032 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
 2025-03-30 22:40:28,602 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:41:28,668 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:41:45,292 - __main__ - INFO - Agent processing user query
+2025-03-30 22:41:45,582 - __main__ - INFO - Using cached prompt template for prompts/prompt_template_agent.txt
+2025-03-30 22:41:46,877 - __main__ - INFO - Calling tool: retrieve
+2025-03-30 22:41:46,979 - __main__ - INFO - Tool retrieve routed to grade_documents based on config
+2025-03-30 22:41:46,981 - __main__ - INFO - Grading documents for relevance
+2025-03-30 22:41:46,982 - __main__ - INFO - Using cached prompt template for prompts/prompt_template_grade.txt
+2025-03-30 22:41:47,521 - __main__ - INFO - Document relevance score: no
+2025-03-30 22:41:47,522 - __main__ - INFO - Routing based on relevance_score: no, rewrite_count: 0
+2025-03-30 22:41:47,522 - __main__ - INFO - Documents are not relevant or scoring failed, proceeding to rewrite
+2025-03-30 22:41:47,524 - __main__ - INFO - Rewriting query
+2025-03-30 22:41:47,525 - __main__ - INFO - Using cached prompt template for prompts/prompt_template_rewrite.txt
+2025-03-30 22:41:47,898 - __main__ - INFO - Rewrite count: 1
+2025-03-30 22:41:47,900 - __main__ - INFO - Agent processing user query
+2025-03-30 22:41:47,966 - __main__ - INFO - Using cached prompt template for prompts/prompt_template_agent.txt
+2025-03-30 22:41:49,661 - __main__ - INFO - Calling tool: retrieve
+2025-03-30 22:41:49,728 - __main__ - INFO - Tool retrieve routed to grade_documents based on config
+2025-03-30 22:41:49,730 - __main__ - INFO - Grading documents for relevance
+2025-03-30 22:41:49,733 - __main__ - INFO - Using cached prompt template for prompts/prompt_template_grade.txt
+2025-03-30 22:41:50,367 - __main__ - INFO - Document relevance score: no
+2025-03-30 22:41:50,368 - __main__ - INFO - Routing based on relevance_score: no, rewrite_count: 1
+2025-03-30 22:41:50,368 - __main__ - INFO - Documents are not relevant or scoring failed, proceeding to rewrite
+2025-03-30 22:41:50,371 - __main__ - INFO - Rewriting query
+2025-03-30 22:41:50,372 - __main__ - INFO - Using cached prompt template for prompts/prompt_template_rewrite.txt
+2025-03-30 22:41:50,771 - __main__ - INFO - Rewrite count: 2
+2025-03-30 22:41:50,772 - __main__ - INFO - Agent processing user query
+2025-03-30 22:41:50,841 - __main__ - INFO - Using cached prompt template for prompts/prompt_template_agent.txt
+2025-03-30 22:41:52,669 - __main__ - INFO - Calling tool: retrieve
+2025-03-30 22:41:52,780 - __main__ - INFO - Tool retrieve routed to grade_documents based on config
+2025-03-30 22:41:52,783 - __main__ - INFO - Grading documents for relevance
+2025-03-30 22:41:52,784 - __main__ - INFO - Using cached prompt template for prompts/prompt_template_grade.txt
+2025-03-30 22:41:53,395 - __main__ - INFO - Document relevance score: no
+2025-03-30 22:41:53,396 - __main__ - INFO - Routing based on relevance_score: no, rewrite_count: 2
+2025-03-30 22:41:53,396 - __main__ - INFO - Documents are not relevant or scoring failed, proceeding to rewrite
+2025-03-30 22:41:53,398 - __main__ - INFO - Rewriting query
+2025-03-30 22:41:53,399 - __main__ - INFO - Using cached prompt template for prompts/prompt_template_rewrite.txt
+2025-03-30 22:41:53,659 - __main__ - INFO - Rewrite count: 3
+2025-03-30 22:41:53,662 - __main__ - INFO - Agent processing user query
+2025-03-30 22:41:53,758 - __main__ - INFO - Using cached prompt template for prompts/prompt_template_agent.txt
+2025-03-30 22:41:54,892 - __main__ - INFO - Calling tool: retrieve
+2025-03-30 22:41:54,955 - __main__ - INFO - Tool retrieve routed to grade_documents based on config
+2025-03-30 22:41:54,957 - __main__ - INFO - Grading documents for relevance
+2025-03-30 22:41:54,958 - __main__ - INFO - Using cached prompt template for prompts/prompt_template_grade.txt
+2025-03-30 22:41:55,522 - __main__ - INFO - Document relevance score: no
+2025-03-30 22:41:55,523 - __main__ - INFO - Routing based on relevance_score: no, rewrite_count: 3
+2025-03-30 22:41:55,523 - __main__ - INFO - Max rewrite limit reached, proceeding to generate
+2025-03-30 22:41:55,525 - __main__ - INFO - Generating final response
+2025-03-30 22:41:55,525 - __main__ - INFO - Using cached prompt template for prompts/prompt_template_generate.txt
+2025-03-30 22:42:28,708 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:43:28,752 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:44:28,814 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:45:28,873 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:46:28,935 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:47:28,940 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:48:28,997 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:49:29,059 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:50:29,122 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:51:29,184 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:52:29,226 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:53:29,280 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:54:29,341 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:55:29,403 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:56:29,971 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:57:30,425 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:58:30,486 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 22:59:30,533 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 23:00:30,603 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 23:01:30,662 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 23:02:30,723 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 23:03:30,738 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 23:04:30,797 - __main__ - INFO - Connection db_connection_pool status: 0/20 connections in use
+2025-03-30 23:04:35,697 - __main__ - INFO - Database connection pool closed
