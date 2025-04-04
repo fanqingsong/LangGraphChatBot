@@ -144,6 +144,9 @@ https://gitee.com/NanGePlus/LangGraphChatBot
 uv venv
 source .venv/bin/activate
 
+python -m pip install --upgrade pip
+pip config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
+
 uv pip install langgraph==0.2.74                  
 uv pip install langchain-openai==0.3.6            
 uv pip install fastapi==0.115.8                         
