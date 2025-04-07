@@ -163,6 +163,8 @@ uv pip install psycopg2-binary
 uv pip install langchain-community
 uv pip install -U langgraph langchain_openai
 uv pip install IPython -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple 
+uv pip install langgraph-supervisor langchain-openai
+
 
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
